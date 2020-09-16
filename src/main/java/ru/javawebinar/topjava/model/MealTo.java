@@ -18,7 +18,23 @@ public class MealTo {
         this.excess = excess;
     }
 
-        @Override
+    public LocalDateTime getDateTime() {
+        return dateTime;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public int getCalories() {
+        return calories;
+    }
+
+    public boolean isExcess() {
+        return excess;
+    }
+
+    @Override
     public String toString() {
                 return "MealTo{" +
                                 "dateTime=" + dateTime +
