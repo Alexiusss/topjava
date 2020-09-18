@@ -47,7 +47,7 @@ public class MealsUtil {
         return meals.stream()
                 .filter(filter)
                 .map(meal ->
-                        new MealTo(meal.getDateTime(), meal.getDescription(), meal.getCalories(),
+                        new MealTo(meal.getId(), meal.getDateTime(), meal.getDescription(), meal.getCalories(),
                                 caloriesSumByDate.get(meal.getDate()) > caloriesPerDay))
                 .collect(Collectors.toList());
     }
