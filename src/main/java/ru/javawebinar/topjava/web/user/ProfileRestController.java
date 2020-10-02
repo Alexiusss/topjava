@@ -16,7 +16,7 @@ public class ProfileRestController extends AbstractUserController {
         super.delete(authUserId());
     }
 
-    public void update(User user) {
+    public void update(User user) throws Exception {
         super.update(user, authUserId());
     }
 }

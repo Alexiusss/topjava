@@ -19,7 +19,7 @@ public class AdminRestController extends AbstractUserController {
     }
 
     @Override
-    public User create(User user) {
+    public User create(User user) throws Exception {
         return super.create(user);
     }
 
@@ -29,7 +29,7 @@ public class AdminRestController extends AbstractUserController {
     }
 
     @Override
-    public void update(User user, int id) {
+    public void update(User user, int id) throws Exception {
         super.update(user, id);
     }
 

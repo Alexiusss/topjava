@@ -21,7 +21,7 @@ public class UserService {
         this.repository = repository;
     }
 
-    public User create(User user) {
+    public User create(User user)  throws Exception{
         return repository.save(user);
     }
 
@@ -41,7 +41,7 @@ public class UserService {
         return repository.getAll();
     }
 
-    public void update(User user) throws NotFoundException {
+    public void update(User user) throws Exception {
         checkNotFoundWithId(repository.save(user), user.getId());
     }
 }

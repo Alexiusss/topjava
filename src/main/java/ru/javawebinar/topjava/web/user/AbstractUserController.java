@@ -27,7 +27,7 @@ public abstract class AbstractUserController {
         return service.get(id);
     }
 
-    public User create(User user) {
+    public User create(User user) throws Exception {
         log.info("create {}", user);
         checkNew(user);
         return service.create(user);
@@ -38,7 +38,7 @@ public abstract class AbstractUserController {
         service.delete(id);
     }
 
-    public void update(User user, int id) {
+    public void update(User user, int id) throws Exception {
         log.info("update {} with id={}", user, id);
         assureIdConsistent(user, id);
         service.update(user);
