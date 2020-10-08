@@ -7,10 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -66,7 +63,11 @@ public class MealsUtil {
                 .collect(Collectors.toList());
     }
 
-    private static MealTo createTo(Meal meal, boolean excess) {
+    public static MealTo createTo(Meal meal, boolean excess) {
         return new MealTo(meal.getId(), meal.getDateTime(), meal.getDescription(), meal.getCalories(), excess);
+    }
+
+    public static List<MealTo> getSortedByDateOrTime(List<MealTo> list, Comparator<MealTo> comparing) {
+        return list.stream().sorted(comparing).collect(Collectors.toList());
     }
 }
