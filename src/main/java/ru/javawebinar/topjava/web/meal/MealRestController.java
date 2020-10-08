@@ -1,44 +1,45 @@
 package ru.javawebinar.topjava.web.meal;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Controller;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealTo;
-import ru.javawebinar.topjava.util.Util;
+import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
+import ru.javawebinar.topjava.web.SecurityUtil;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.Comparator.comparing;
 import static ru.javawebinar.topjava.util.MealsUtil.*;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
 import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 import static ru.javawebinar.topjava.web.SecurityUtil.authUserCaloriesPerDay;
-import static ru.javawebinar.topjava.util.Util.isBetweenInclusive;
+import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
+import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
 
 @Controller
 public class MealRestController {
 
-    @Autowired
     private MealService service;
 
-//    public MealRestController(MealService mealService) {
-//        this.service = mealService;
-//    }
+    @Autowired
+    public MealRestController(MealService mealService) {
+        this.service = mealService;
+    }
 
-
-    public void save(Meal meal) {
-        service.save(meal, authUserId());
+    public void create(Meal meal) {
+        //checkNew(meal);
+        service.create(meal, authUserId());
     }
 
     public void delete(int id) {
-        service.delete(authUserId(), id);
+        service.delete(id, authUserId());
     }
 
     public Collection<Meal> getAll() {
@@ -54,8 +55,11 @@ public class MealRestController {
         else return service.get(id, authUserId());
     }
 
-    public void update(Meal meal) {
-        service.update(meal, authUserId());
+    public void update(Meal meal, int id) {
+        int userId = SecurityUtil.authUserId();
+        assureIdConsistent(meal, id);
+        //log.info("update {} for user {}", meal, userId);
+        service.update(meal, userId);
     }
 
     public List<MealTo> sortedByStartTime(List<MealTo> list) {
@@ -73,6 +77,15 @@ public class MealRestController {
     public List<MealTo> sortedByEndDate(List<MealTo> list) {
         return getSortedByDateOrTime(list, comparing(MealTo::getDate).reversed());
     }
+
+//    public List<MealTo> getBetween(@Nullable LocalDate startDate, @Nullable LocalTime startTime,
+//                                   @Nullable LocalDate endDate, @Nullable LocalTime endTime) {
+//                int userId = SecurityUtil.authUserId();
+//                log.info("getBetween dates({} - {}) time({} - {}) for user {}", startDate, endDate, startTime, endTime, userId);
+//
+//                        List<Meal> mealsDateFiltered = service.getBetweenDates(startDate, endDate, userId);
+//                return MealsUtil.getFilteredTos(mealsDateFiltered, SecurityUtil.authUserCaloriesPerDay(), startTime, endTime);
+//            }
 
 
 }
