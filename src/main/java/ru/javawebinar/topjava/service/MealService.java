@@ -51,10 +51,10 @@ public class MealService {
         checkNotFoundWithId(repository.save(meal, userId), meal.getId());
     }
 
-//    public List<Meal> getBetweenDates(@Nullable LocalDate startDate, @Nullable LocalDate endDate, int userId) {
-//                return repository.getBetween(
-//                                DateTimeUtil.createDateTime(startDate, LocalDate.MIN, LocalTime.MIN),
-//                                DateTimeUtil.createDateTime(endDate, LocalDate.MAX, LocalTime.MAX), userId);
-//            }
+    public List<Meal> getBetweenDates(@Nullable LocalDate startDate, @Nullable LocalDate endDate, int userId) {
+                return repository.getBetween(
+                                DateTimeUtil.createDateTime(startDate, LocalDate.MIN, LocalTime.MIN),
+                                DateTimeUtil.createDateTime(endDate, LocalDate.MAX, LocalTime.MAX), userId);
+            }
 
 }

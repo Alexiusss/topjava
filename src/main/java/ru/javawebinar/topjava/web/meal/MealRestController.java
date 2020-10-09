@@ -78,14 +78,14 @@ public class MealRestController {
         return getSortedByDateOrTime(list, comparing(MealTo::getDate).reversed());
     }
 
-//    public List<MealTo> getBetween(@Nullable LocalDate startDate, @Nullable LocalTime startTime,
-//                                   @Nullable LocalDate endDate, @Nullable LocalTime endTime) {
-//                int userId = SecurityUtil.authUserId();
-//                log.info("getBetween dates({} - {}) time({} - {}) for user {}", startDate, endDate, startTime, endTime, userId);
-//
-//                        List<Meal> mealsDateFiltered = service.getBetweenDates(startDate, endDate, userId);
-//                return MealsUtil.getFilteredTos(mealsDateFiltered, SecurityUtil.authUserCaloriesPerDay(), startTime, endTime);
-//            }
+    public List<MealTo> getBetween(@Nullable LocalDate startDate, @Nullable LocalTime startTime,
+                                   @Nullable LocalDate endDate, @Nullable LocalTime endTime) {
+                int userId = SecurityUtil.authUserId();
+                //log.info("getBetween dates({} - {}) time({} - {}) for user {}", startDate, endDate, startTime, endTime, userId);
+
+                        List<Meal> mealsDateFiltered = service.getBetweenDates(startDate, endDate, userId);
+                return MealsUtil.getFilteredTos(mealsDateFiltered, SecurityUtil.authUserCaloriesPerDay(), startTime, endTime);
+            }
 
 
 }
