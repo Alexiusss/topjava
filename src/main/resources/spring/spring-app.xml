@@ -16,10 +16,16 @@
     <!--<context:annotation-config/>-->
 
 
-    <context:component-scan base-package="ru.javawebinar.**.repository.jdbc"/>
+
+    <context:component-scan base-package="ru.javawebinar.topjava.repository.*"/>
+
+<!--    <context:component-scan base-package="ru.javawebinar.topjava.repository.inmemory"/>-->
+
+<!--    <context:component-scan base-package="ru.javawebinar.**.repository.jdbc"/>-->
 
     <context:component-scan base-package="ru.javawebinar.**.service"/>
 
     <context:component-scan base-package="ru.javawebinar.**.web"/>
+
 
 </beans>
