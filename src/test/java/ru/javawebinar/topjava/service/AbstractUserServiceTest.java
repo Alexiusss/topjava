@@ -13,6 +13,7 @@ import ru.javawebinar.topjava.repository.JpaUtil;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.util.List;
+import java.util.Set;
 
 import static ru.javawebinar.topjava.UserTestData.*;
 
@@ -34,7 +35,7 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
 
     @Test
     public void create() throws Exception {
-        User newUser = getNew();
+        User newUser = getNewAdmin();
         User created = service.create(newUser);
         Integer newId = created.getId();
         newUser.setId(newId);
@@ -63,6 +64,11 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
         User user = service.get(USER_ID);
         assertMatch(user, USER);
     }
+ @Test
+    public void getAdmin() throws Exception {
+        User admin = service.get(ADMIN_ID);
+        assertMatch(admin, ADMIN);
+    }
 
     @Test(expected = NotFoundException.class)
     public void getNotFound() throws Exception {
@@ -86,6 +92,7 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     public void getAll() throws Exception {
         List<User> all = service.getAll();
         assertMatch(all, ADMIN, USER);
+
     }
 
 }
