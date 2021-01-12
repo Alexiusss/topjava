@@ -92,9 +92,21 @@ public class MealRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getBetween() throws Exception {
-        String startDate = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(MEAL1.getDateTime());
-        String endDate = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(MEAL3.getDateTime());
-        mockMvc.perform(MockMvcRequestBuilders.get(REST_URL + "filter?startDate=" + startDate + "&endDate=" + endDate + "&startTime=&endTime="))
+        String startDate = DateTimeFormatter.ISO_LOCAL_DATE.format(MEAL1.getDate());
+        String endDate = DateTimeFormatter.ISO_LOCAL_DATE.format(MEAL3.getDate());
+        String startTime = DateTimeFormatter.ISO_TIME.format(MEAL1.getTime());
+        String endTime = DateTimeFormatter.ISO_TIME.format(MEAL3.getTime());
+        mockMvc.perform(MockMvcRequestBuilders.get(REST_URL + "filter?startDate=" + startDate + "&endDate=" + endDate + "&startTime=" + startTime + "&endTime=" + endTime))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(contentJsonTo(getTos(List.of(MEAL3, MEAL2, MEAL1), SecurityUtil.authUserCaloriesPerDay())));
+
+        mockMvc.perform(MockMvcRequestBuilders.get(REST_URL + "filter?startDate=" + "&endDate=" + "&startTime=" + startTime + "&endTime=" + endTime))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(contentJsonTo(getTos(List.of(MEAL7, MEAL6, MEAL5, MEAL3, MEAL2, MEAL1), SecurityUtil.authUserCaloriesPerDay())));
+
+        mockMvc.perform(MockMvcRequestBuilders.get(REST_URL + "filter?startDate=" + startDate + "&endDate=" + endDate + "&startTime=" + "&endTime="))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(contentJsonTo(getTos(List.of(MEAL3, MEAL2, MEAL1), SecurityUtil.authUserCaloriesPerDay())));
