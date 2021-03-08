@@ -1,0 +1,18 @@
+# curl http://localhost:8080/topjava/rest/meals/filter?startDate=&endDate=&startTime=10:00&endTime=20:00
+GET http://localhost:8080/topjava/rest/meals/filter?startDate=&endDate=&startTime=10:00&endTime=20:00
+
+###
+
+# curl http://localhost:8080/topjava/rest/meals/100002
+GET http://localhost:8080/topjava/rest/meals/100002
+
+###
+
+# curl http://localhost:8080/topjava/rest/meals
+GET http://localhost:8080/topjava/rest/meals
+
+###
+
+
+
+
