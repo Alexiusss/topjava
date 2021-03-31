@@ -1,3 +1,5 @@
+var mealAjaxUrl = "ajax/profile/meals/";
+
 function updateFilteredTable() {
     $.ajax({
         type: "GET",
@@ -15,11 +17,21 @@ $(function () {
     makeEditable({
         ajaxUrl: "ajax/profile/meals/",
         datatableApi: $("#datatable").DataTable({
+            "ajax": {
+                "url" : mealAjaxUrl,
+                "dataSrc": ""
+            },
             "paging": false,
             "info": true,
             "columns": [
                 {
-                    "data": "dateTime"
+                    "data": "dateTime",
+                    "render" : function (data, type, row) {
+                        if (type === "display") {
+                            return data.replace("T", " ").substr(0, 16);
+                        }
+                        return data;
+                    }
                 },
                 {
                     "data": "description"
@@ -28,12 +40,14 @@ $(function () {
                     "data": "calories"
                 },
                 {
-                    "defaultContent": "Edit",
-                    "orderable": false
+                    "orderable": false,
+                    "defaultContent": "",
+                    "render" : renderEditBtn
                 },
                 {
-                    "defaultContent": "Delete",
-                    "orderable": false
+                    "orderable": false,
+                    "defaultContent": "",
+                    "render": renderDeleteBtn
                 }
             ],
             "order": [
@@ -41,8 +55,17 @@ $(function () {
                     0,
                     "desc"
                 ]
-            ]
+            ],
+            "createdRow": function (row, data, dataIndex) {
+                $(row).attr("data-mealExcess", data.excess);
+            },
         }),
-        updateTable: updateFilteredTable
+        updateTable: function () {
+            $.get(mealAjaxUrl, updateFilteredTable);
+        }
+    });
+    $('#dateTime').datetimepicker({
+        format: 'Y-m-d H:i'
     });
 });
+
