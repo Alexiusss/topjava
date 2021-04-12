@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import ru.javawebinar.topjava.TestUtil;
 import ru.javawebinar.topjava.UserTestData;
+import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.service.UserService;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
@@ -99,6 +100,13 @@ class AdminRestControllerTest extends AbstractControllerTest {
         newUser.setId(newId);
         USER_MATCHERS.assertMatch(created, newUser);
         USER_MATCHERS.assertMatch(userService.get(newId), newUser);
+    }
+
+    @Test
+    void createWithInvalidData() throws Exception {
+        User invalidUser = new User(null, "", "", "", 0, Role.ROLE_ADMIN);
+        ResultActions action = perform(doPost().jsonUserWithPassword(invalidUser).basicAuth(ADMIN))
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
