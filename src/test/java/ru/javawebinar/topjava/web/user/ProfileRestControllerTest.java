@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.service.UserService;
 import ru.javawebinar.topjava.to.UserTo;
@@ -11,8 +13,7 @@ import ru.javawebinar.topjava.util.UserUtil;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.javawebinar.topjava.TestUtil.readFromJson;
 import static ru.javawebinar.topjava.UserTestData.*;
 
@@ -59,6 +60,17 @@ class ProfileRestControllerTest extends AbstractControllerTest {
         newUser.setId(newId);
         USER_MATCHERS.assertMatch(created, newUser);
         USER_MATCHERS.assertMatch(userService.get(newId), newUser);
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.NEVER)
+    void registerWithDuplicateEmail() throws Exception {
+        UserTo duplicateTo = new UserTo(null, "newName", "admin@gmail.com", "newPassword", 1500);
+        perform(doPost("/register").jsonBody(duplicateTo));
+        perform(doPost("/register").jsonBody(duplicateTo))
+                .andDo(print())
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.detail").value("User with this email already exists"));
     }
 
     @Test

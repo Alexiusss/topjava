@@ -46,6 +46,9 @@ public class ExceptionInfoHandler {
         if(rootCause.getLocalizedMessage().contains("users_unique_email_idx")){
             return new ErrorInfo(req.toString(), VALIDATION_ERROR, "User with this email already exists");
         }
+                if(rootCause.getLocalizedMessage().contains("meals_unique_user_datetime_idx")){
+            return new ErrorInfo(req.toString(), VALIDATION_ERROR, "Meal with this dateTime already exists");
+        }
         return logAndGetErrorInfo(req, e, true, DATA_ERROR);
     }
 

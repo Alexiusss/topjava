@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.TestUtil;
 import ru.javawebinar.topjava.UserTestData;
 import ru.javawebinar.topjava.model.Role;
@@ -15,8 +17,7 @@ import ru.javawebinar.topjava.web.AbstractControllerTest;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.javawebinar.topjava.UserTestData.*;
 
 class AdminRestControllerTest extends AbstractControllerTest {
@@ -105,8 +106,28 @@ class AdminRestControllerTest extends AbstractControllerTest {
     @Test
     void createWithInvalidData() throws Exception {
         User invalidUser = new User(null, "", "", "", 0, Role.ROLE_ADMIN);
-        ResultActions action = perform(doPost().jsonUserWithPassword(invalidUser).basicAuth(ADMIN))
+        perform(doPost().jsonUserWithPassword(invalidUser).basicAuth(ADMIN))
                 .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.NEVER)
+    void createWithDuplicateEmail() throws Exception {
+         User duplicateMailUser = new User(null, "newName", "admin@gmail.com", "newPassword",1500, Role.ROLE_USER);
+        perform(doPost().jsonUserWithPassword(duplicateMailUser).basicAuth(ADMIN))
+                .andDo(print())
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.detail").value("User with this email already exists"));
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.NEVER)
+    void updateWithDuplicateEmail() throws Exception {
+        User updated = getDuplicateEmail();
+        perform(doPut(USER_ID).jsonUserWithPassword(updated).basicAuth(ADMIN))
+                .andDo(print())
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.detail").value("User with this email already exists"));
     }
 
     @Test

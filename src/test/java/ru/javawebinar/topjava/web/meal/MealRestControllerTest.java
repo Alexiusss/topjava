@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.MealTestData;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
@@ -15,8 +17,7 @@ import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.TestUtil.readFromJson;
 import static ru.javawebinar.topjava.TestUtil.readFromJsonMvcResult;
@@ -94,8 +95,32 @@ class MealRestControllerTest extends AbstractControllerTest {
     @Test
     void createWithInvalidData() throws Exception {
         Meal invalidMeal = new Meal(null, "", 0);
-        ResultActions action = perform(doPost().jsonBody(invalidMeal).basicAuth(USER))
-                .andExpect(status().isUnprocessableEntity());
+        perform(doPost().jsonBody(invalidMeal).basicAuth(USER))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.type").value("VALIDATION_ERROR"));
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.NEVER)
+    void createWithDuplicateDateTime() throws Exception {
+        Meal duplicate = MealTestData.getNew();
+        duplicate.setDateTime(MEAL1.getDateTime());
+        perform(doPost().jsonBody(duplicate).basicAuth(USER))
+                .andDo(print())
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.detail").value("Meal with this dateTime already exists"));
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.NEVER)
+    void updateWithDuplicateDateTime() throws Exception {
+        Meal duplicateUpdate = MEAL1;
+        duplicateUpdate.setDateTime(MEAL2.getDateTime());
+        perform(doPut(MEAL1_ID).jsonBody(duplicateUpdate).basicAuth(USER))
+                .andDo(print())
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.detail").value("Meal with this dateTime already exists"));
+
     }
 
     @Test

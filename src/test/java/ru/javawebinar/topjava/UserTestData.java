@@ -26,6 +26,11 @@ public class UserTestData {
         updated.setRoles(Collections.singletonList(Role.ROLE_ADMIN));
         return updated;
     }
+    public static User getDuplicateEmail(){
+        User duplicate = new User(USER);
+        duplicate.setEmail("admin@gmail.com");
+        return duplicate;
+    }
 
     public static TestMatchers<User> USER_MATCHERS = TestMatchers.useFieldsComparator(User.class, "registered", "meals", "password");
 }
